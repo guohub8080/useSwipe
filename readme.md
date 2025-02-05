@@ -9,3 +9,4 @@ pnpm add lodash
 pnpm add react-swipeable
 pnpm add react-use
 ```
+copy and pate the code then enjoy it.
