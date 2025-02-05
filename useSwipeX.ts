@@ -3,7 +3,7 @@ import {useEffect, useMemo, useState} from "react";
 import {useList} from "react-use";
 import byDefault from "./byDefault";
 
-const useSwipeY = (config?: {
+const useSwipeX = (config?: {
   mobileDistanceTrigger?: number,
   mouseDistanceTrigger?: number,
   onSwipeTrigger?: (i: boolean) => any
@@ -92,4 +92,4 @@ const useSwipeY = (config?: {
   }, [triggerTimes])
   return {handlers, isRight, distance, isSwipping}
 }
-export default useSwipeY
+export default useSwipeX
