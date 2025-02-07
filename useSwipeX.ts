@@ -2,6 +2,7 @@ import {useSwipeable} from "react-swipeable";
 import {useEffect, useMemo, useState} from "react";
 import {useList} from "react-use";
 import byDefault from "./byDefault";
+import {isUndefined} from "lodash";
 
 const useSwipeX = (config?: {
   mobileDistanceTrigger?: number,
@@ -20,14 +21,14 @@ const useSwipeX = (config?: {
   const [isSwipping, setIsSwiping] = useState(false)
   //滑动的方向，true为向右，false为向左
   const [isRight, setIsRight] = useState(false)
-  // 每次滑动的坐标记录在listY中
+  // 每次滑动的坐标记录在listX中
   const [listX, listXMethods] = useList<any>([])
   const handlers = useSwipeable({
     onTouchStartOrOnMouseDown: () => {
       setIsSwiping(true)
     },
     onSwiping: e => {
-      if (e.event instanceof TouchEvent) {
+      if (!isUndefined(window.TouchEvent) && e.event instanceof TouchEvent) {
         setIsMobile(true)
         // 如果是触摸事件，访问 touches
         const cx = e.event.touches[0].clientX as any;
@@ -42,21 +43,21 @@ const useSwipeX = (config?: {
       }
       //前两个值确定了方向
       if (listX.length === 2) {
-        if (listX[0] >= listX[1]) {
+        if (listX[0] <= listX[1]) {
           return setIsRight(true)
         }
         return setIsRight(false)
       }
       if (listX.length >= 3) {
         if (isRight) {
-          if (listX[listX.length - 1] <= listX[listX.length - 2]) {
+          if (listX[listX.length - 1] >= listX[listX.length - 2]) {
             return setDistance(Math.abs(listX[listX.length - 1] - x))
           }
           setX(listX[listX.length - 1])
           listXMethods.clear()
           return
         }
-        if (listX[listX.length - 1] >= listX[listX.length - 2]) {
+        if (listX[listX.length - 1] <= listX[listX.length - 2]) {
           return setDistance(Math.abs(listX[listX.length - 1] - x))
         }
         setX(listX[listX.length - 1])
@@ -68,8 +69,7 @@ const useSwipeX = (config?: {
       setDistance(0)
       setIsSwiping(false)
       listXMethods.clear()
-    }
-    ,
+    },
     preventScrollOnSwipe: true,
     trackMouse: true,
     trackTouch: true,

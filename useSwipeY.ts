@@ -2,12 +2,14 @@ import {useSwipeable} from "react-swipeable";
 import {useEffect, useMemo, useState} from "react";
 import {useList} from "react-use";
 import byDefault from "./byDefault";
+import {isUndefined} from "lodash";
 
 const useSwipeY = (config?: {
   mobileDistanceTrigger?: number,
   mouseDistanceTrigger?: number,
   onSwipeTrigger?: (i: boolean) => any
 }) => {
+
   //以某个坐标作为比较的basePoint
   const [y, setY] = useState(0);
   //决定是否是移动端，如果是移动端，就启用touch事件，否则就启用mouse事件
@@ -27,13 +29,12 @@ const useSwipeY = (config?: {
       setIsSwiping(true)
     },
     onSwiping: e => {
-      if (e.event instanceof TouchEvent) {
+      if (!isUndefined(window.TouchEvent) && e.event instanceof TouchEvent) {
         setIsMobile(true)
         // 如果是触摸事件，访问 touches
         const cy = e.event.touches[0].clientY as any;
         if (listY.length === 0) setY(cy)
         listYMethods.push(cy as any)
-
       } else if (e.event instanceof MouseEvent) {
         setIsMobile(false)
         // 如果是鼠标事件，使用鼠标的坐标
@@ -69,8 +70,7 @@ const useSwipeY = (config?: {
       setDistance(0)
       setIsSwiping(false)
       listYMethods.clear()
-    }
-    ,
+    },
     preventScrollOnSwipe: true,
     trackMouse: true,
     trackTouch: true,
@@ -79,7 +79,7 @@ const useSwipeY = (config?: {
     if (isMobile) {
       setPxTrigger(byDefault(config?.mobileDistanceTrigger, 20))
     } else {
-      setPxTrigger(byDefault(config?.mouseDistanceTrigger, 40))
+      setPxTrigger(byDefault(config?.mouseDistanceTrigger, 20))
     }
   }, [config, isMobile])
   const triggerTimes = useMemo(() => {
